@@ -30,9 +30,9 @@ export const TransactionTable = styled.table`
 
 `;
 
-interface PriceHightLigthProps{
+interface PriceHightLightProps{
     variant: 'income' | 'outcome';
 }
-export const PriceHightLigth = styled.span<PriceHightLigthProps>`
+export const PriceHightLight = styled.span<PriceHightLightProps>`
     color: ${props => props.variant === 'income' ? props.theme["green-300"] : props.theme['red-300']};
 `
