@@ -14,7 +14,7 @@ type SearchFormInputs = z.infer<typeof searchFormSchema>;
 export function SearchForm(){
     // Use context to fetch transactions.
     const {fetchTransactions} = useContext(TransactionsContext)
-
+    console.log(fetchTransactions)
     // Implement form with react-hook-form and zod for validation.
     const {register, handleSubmit, formState: {isSubmitting}} = useForm<SearchFormInputs>({
         resolver: zodResolver(searchFormSchema)
