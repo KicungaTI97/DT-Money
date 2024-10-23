@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
+import { api } from "../lib/axios";
 
 interface Transaction{
     id: number;
@@ -25,20 +26,18 @@ export function TransactionsProvider({children}:TransactionsProviderProps){
     const [transactions, setTransactions] = useState<Transaction[]>([])
     // Implement the logic to fetch transactions from the API.
     async function fetchTransactions(query?: string){
-    try {
-        const url = new URL('http://localhost:3333/transactions')
-        if(query){
-            url.searchParams.append('q', query)
+   
+        try {
+            const response = await api.get('transactions',{
+                params: {
+                    q: query,
+                },
+            })
+            setTransactions(response.data);
+        } catch (error) {
+            console.log('Error fetching transactions:',error,)
         }
-        const response = await fetch(url)
-        const data = await response.json(); 
-
-        setTransactions(data);
-       
-    } catch (error){
-        console.error('Error fetching transactions:', error);
-        
-    }
+ 
 }
 
     // Fetch transactions when the component mounts and when the query changes.
