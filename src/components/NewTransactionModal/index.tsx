@@ -4,8 +4,8 @@ import { ArrowCircleDown, ArrowCircleUp, X } from "phosphor-react";
 import * as z from 'zod'
 import { Controller, useForm } from "react-hook-form"; // Importa ferramentas para gerenciar formulários
 import { zodResolver } from "@hookform/resolvers/zod"; // Conecta zod com react-hook-form
-import { useContext } from "react";
 import { TransactionsContext } from "../../context/TransactionsContext";
+import { useContextSelector } from "use-context-selector";
 
 // Define o esquema de validação para o formulário usando zod
 const newTransactionFormSchema = z.object({
@@ -18,8 +18,10 @@ const newTransactionFormSchema = z.object({
 // Define o tipo dos inputs do formulário com base no esquema
 type NewTransactionFormInputs = z.infer<typeof newTransactionFormSchema>;
 export function NewTransactionModal(){
-    // Usa o contexto para acessar a função de criar nova transação
-    const {createTransaction} = useContext(TransactionsContext)
+    // Obtém a função para criação de transações do contexto
+    const createTransaction = useContextSelector(TransactionsContext, (context) =>{
+        return context.createTransaction
+    })
 
     // Utiliza react-hook-form para lidar com o formulário e validar os dados
     const {
