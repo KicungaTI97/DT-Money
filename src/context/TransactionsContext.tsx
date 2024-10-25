@@ -15,60 +15,68 @@ interface CreateTransactionInput{
     category: string;
     type: 'income' | 'outcome';
 }
+// Interface para definir o tipo do contexto, incluindo os métodos para buscar e criar transações
 interface TransactionContextType{
-    transactions: Transaction[]
-    fetchTransactions: (query?: string) => Promise<void>
-    createTransaction: (data: CreateTransactionInput) => Promise<void>
+    transactions: Transaction[];  // lista de transações
+    fetchTransactions: (query?: string) => Promise<void>; // método para buscar transações
+    createTransaction: (data: CreateTransactionInput) => Promise<void> // método para criar uma nova transação
 }
 
+// Criação do contexto `TransactionsContext` com um valor inicial vazio, mas do tipo `TransactionContextType`
 export const TransactionsContext = createContext({} as TransactionContextType)
 
+// Interface para definir as propriedades que o `TransactionsProvider` deve receber (neste caso, os filhos)
 interface TransactionsProviderProps{
     children: ReactNode
 }
 
-
-// Implement the TransactionsProvider component to provide the transactions context and fetch transactions from the API.
+// Função principal que fornece o contexto para os componentes que consomem dados de transações
 export function TransactionsProvider({children}:TransactionsProviderProps){
+     // State (estado) para armazenar a lista de transações
     const [transactions, setTransactions] = useState<Transaction[]>([])
-    // Implement the logic to fetch transactions from the API.
+
+    // Função para buscar transações do servidor. Pode aceitar uma query opcional para filtrar resultados
     async function fetchTransactions(query?: string){
    
         try {
+             // Faz uma requisição GET para buscar transações e ordena os resultados por data (mais recentes primeiro)
             const response = await api.get('transactions',{
                 params: {
-                    q: query,
+                    q: query, // Filtrar resultados por query se for fornecida
                     _sort: 'createdAt',
                     _order: 'desc',
                  
                 },
             })
-            setTransactions(response.data);
+            setTransactions(response.data); // Atualiza o estado com as transações obtidas
         } catch (error) {
             console.log('Error fetching transactions:',error,)
      }
 }
 
+// Função para criar uma nova transação e enviar para o servidor
     async function createTransaction(data: CreateTransactionInput){
         const {description, price, category, type} = data;
 
+        // Faz uma requisição POST para criar uma nova transação e adiciona-a à lista de transações
         const response = await api.post('transactions', {
             description,
             price,
             category,
             type,
-            createdAt: new Date(),
+            createdAt: new Date(), // Define a data de criação como o momento atual
         })
 
+         // Adiciona a nova transação ao estado (no início da lista)
         setTransactions(state => [response.data, ...state])
     }
 
-    // Fetch transactions when the component mounts and when the query changes.
+    // useEffect para buscar transações automaticamente quando o componente for montado
     useEffect(()=>{
-     fetchTransactions();
+     fetchTransactions(); // Chama a função para buscar transações quando o componente é carregado
      
     },[])
-
+// Provedor do contexto que disponibiliza os dados e métodos para os componentes filhos
     return(
         <TransactionsContext.Provider value={{
             transactions,
