@@ -69,7 +69,8 @@ export function TransactionsProvider({children}:TransactionsProviderProps){
                 category,
                 type,
                 createdAt: new Date(), // Define a data de criação como o momento atual
-            },[],
+            },
+            [],
         )
     
              // Adiciona a nova transação ao estado (no início da lista)
@@ -81,7 +82,7 @@ export function TransactionsProvider({children}:TransactionsProviderProps){
     useEffect(()=>{
      fetchTransactions(); // Chama a função para buscar transações quando o componente é carregado
      
-    },[])
+    },[fetchTransactions])
 // Provedor do contexto que disponibiliza os dados e métodos para os componentes filhos
     return(
         <TransactionsContext.Provider value={{
